@@ -1,0 +1,9 @@
+/target/
+/target-build/
+*.exe
+*.pdb
+*.log
+/.detailtest/
+/.chrome-shot*/
+/browser-extension/
+/docs/_progress.png
