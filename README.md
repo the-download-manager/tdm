@@ -104,7 +104,7 @@ tdm-cli video <manifest> --audio-only                      :: save just the audi
   separate video/audio `AdaptationSet`s, ISO-BMFF init + fragments.
 - **Muxing**: video-only + audio-only → mp4; TS → mp4; audio-only → m4a.
 - Rejected with a clear message: AES-128 encrypted HLS, live playlists, DRM.
-- Requires `ffmpeg.exe` in `tools\ffmpeg\...` or set `TDM_FFMPEG`.
+- Requires `ffmpeg.exe` on `PATH`, or set `TDM_FFMPEG` to its full path.
 
 ### Download details
 
@@ -141,13 +141,9 @@ The progress window shows overall speed and each connection's byte range.
 
 TDM targets **Windows 10 / 11 (x64)**.
 
-1. Open the [latest release](https://github.com/the-download-manager/tdm/releases/latest).
-2. Download `tdm-windows-x64.zip` and extract it anywhere.
-3. Run `tdm.exe` — the window opens with no console behind it.
-4. `tdm-cli.exe` is the same engine for terminals and scripts.
-
-The binaries are **not code-signed**, so Windows SmartScreen may show a warning on first
-run: choose **More info → Run anyway**, or build from source.
+There is no binary release yet. Build from source with the instructions below; the
+resulting `tdm.exe` opens without a console window, and `tdm-cli.exe` is the same engine
+for terminals and scripts.
 
 <br>
 
@@ -214,7 +210,7 @@ The dashboard is at `http://127.0.0.1:8484`. Endpoints cover add, pause, resume 
 |---|---|
 | Home directory (config, records, logs) | `%APPDATA%\tdm`, override with `TDM_HOME` |
 | Download folder, connections, speed limit, proxy | GUI **Options** or `tdm-cli config` |
-| ffmpeg location | `tools\ffmpeg\...` or `TDM_FFMPEG` |
+| ffmpeg location | `ffmpeg.exe` on `PATH`, or `TDM_FFMPEG` |
 | Local API port | `api_port` in config (default `8484`) |
 
 <br>
