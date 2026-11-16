@@ -1,0 +1,3 @@
+# MinGW-w64 gcc must be on PATH (or set TDM_MINGW).
+[build]
+target = "x86_64-pc-windows-gnu"

@@ -6,16 +6,16 @@
 
 <p align="center">
   <b>A fast, segmented download manager for Windows with a classic desktop UI — written in Rust.</b><br>
-  Multi-connection transfers, resume, browser capture, HLS/DASH video and a native egui interface.<br>
-  Open source, offline, no ads, no telemetry.
+  Multi-connection transfers, resume, HLS/DASH video and a native egui interface.<br>
+  Open source, local, no ads, no telemetry.
 </p>
 
 <p align="center">
   <img alt="100% Rust" src="https://img.shields.io/badge/Rust-100%25-b7410e?style=flat-square&logo=rust">
   <img alt="Windows 10 / 11 x64" src="https://img.shields.io/badge/Windows-10%20%7C%2011%20x64-0078D6?style=flat-square&logo=windows&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square">
-  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-3BEDCB?style=flat-square">
-  <img alt="24 tests passing" src="https://img.shields.io/badge/tests-24%20passing-2ea44f?style=flat-square">
+  <img alt="Version 0.7.3" src="https://img.shields.io/badge/version-0.7.3-3BEDCB?style=flat-square">
+  <img alt="22 tests passing" src="https://img.shields.io/badge/tests-22%20passing-2ea44f?style=flat-square">
 </p>
 
 <p align="center">
@@ -24,7 +24,6 @@
   <a href="#install">Install</a> ·
   <a href="#build-from-source">Build</a> ·
   <a href="#quick-start">Quick start</a> ·
-  <a href="#browser-capture">Browser capture</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#license">License</a>
 </p>
@@ -56,14 +55,14 @@
       ffmpeg remux — no re-encoding.
     </td>
     <td width="25%" valign="top">
-      <h3>🌐 Browser capture</h3>
-      An MV3 extension sends media URLs with their cookies and headers to TDM, so
-      downloads work on sites where you are signed in.
+      <h3>🔄 Resume and recovery</h3>
+      Per-segment checkpoints, automatic retries and resumable HLS/DASH parts mean
+      interrupted transfers continue where they left off.
     </td>
     <td width="25%" valign="top">
       <h3>🪟 Native and small</h3>
       One ~10 MB executable, no installer, no runtime, no Electron. A native egui window
-      and a separate console binary for scripts.
+      that minimizes to the tray, optional start with Windows, and a separate console binary.
     </td>
   </tr>
 </table>
@@ -107,22 +106,11 @@ tdm-cli video <manifest> --audio-only                      :: save just the audi
 - Rejected with a clear message: AES-128 encrypted HLS, live playlists, DRM.
 - Requires `ffmpeg.exe` in `tools\ffmpeg\...` or set `TDM_FFMPEG`.
 
-### Browser capture
+### Download details
 
-The MV3 extension watches the tab, remembers each media response with its request
-headers, and posts it to TDM's local API.
-
-```
-page plays media → extension captures URL + headers → POST /api/media
-                 → TDM downloads (HLS/DASH/direct) → mux → appears in the list
-```
-
-- **Send** one stream, or **Download video + audio** when the player exposes separate
-  video and audio tracks — with a quality dropdown.
-- **Auto-send** hands every detected stream to TDM immediately.
-- **Record playback (MSE)** for players that never expose a URL: the extension records
-  the buffers the player appends and TDM muxes them when you press **Stop and save**.
-  Start at the beginning and play linearly for a clean file; DRM cannot be recorded.
+The download list supports per-column resizing, multi-selection with Ctrl/Shift-click,
+and a right-click menu for details, pause/resume, copy URL, open folder, or removal.
+The progress window shows overall speed and each connection's byte range.
 
 <br>
 
@@ -135,8 +123,14 @@ page plays media → extension captures URL + headers → POST /api/media
       <br><sub>The download list, category filter and toolbar.</sub>
     </td>
     <td width="50%" valign="top">
-      <img src="docs/screenshot-about.png" alt="TDM About dialog with the logo, Sri Lankan flag and credits" width="100%">
-      <br><sub>Help → About: project, credits and license.</sub>
+      <img src="docs/screenshot-about.png" alt="TDM About dialog with open-source links, MIT license and credits" width="100%">
+      <br><sub>Help → About: source, MIT license, issues and third-party notices.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <img src="docs/screenshot-progress.png" alt="TDM Download progress dialog with overall progress and per-connection bars" width="100%">
+      <br><sub>Download progress: overall rainbow bar and live per-connection segments.</sub>
     </td>
   </tr>
 </table>
@@ -169,12 +163,13 @@ Requirements:
 git clone https://github.com/the-download-manager/tdm
 cd tdm
 
-build.cmd build --release    :: uses the bundled toolchain paths
-build.cmd test               :: 24 tests
+build.cmd build --release    :: cargo build --release with the GNU target
+build.cmd test               :: 22 tests
 ```
 
-`build.cmd` sets `CARGO_HOME`, `RUSTUP_HOME` and `PATH`. The release binaries end up in
-`target\x86_64-pc-windows-gnu\release\`. Both are self-contained apart from Windows
+`build.cmd` keeps build output in `target-build\` and uses the Rust/MinGW toolchain on
+your `PATH`. The release binaries end up in
+`target-build\x86_64-pc-windows-gnu\release\`. Both are self-contained apart from Windows
 system DLLs; `src/main_gui.rs` carries `#![windows_subsystem = "windows"]`, which is what
 removes the console window.
 
@@ -209,17 +204,7 @@ curl -X POST http://127.0.0.1:8484/api/downloads ^
   -d "{\"url\":\"https://example.com/file.zip\",\"connections\":8}"
 ```
 
-The dashboard is at `http://127.0.0.1:8484`. Endpoints cover add, pause, resume, delete
-and video capture.
-
-### Browser extension
-
-1. Start TDM.
-2. Open `chrome://extensions`, enable **Developer mode**.
-3. **Load unpacked** → select `browser-extension`.
-4. Pin the extension and play a video; the badge counts detected streams.
-
-See [`browser-extension/README.md`](browser-extension/README.md) for details.
+The dashboard is at `http://127.0.0.1:8484`. Endpoints cover add, pause, resume and delete.
 
 <br>
 
@@ -260,7 +245,7 @@ src/
 
 - **Engine first:** a data model and a download engine, with a thin egui UI on top.
 - **One record per download** in `%APPDATA%\tdm\downloads`, written atomically.
-- **Local HTTP API** so the browser extension and scripts use the same engine as the GUI.
+- **Local HTTP API** so scripts and other tools use the same engine as the GUI.
 
 <br>
 
@@ -270,7 +255,7 @@ src/
 build.cmd test
 ```
 
-24 tests: 20 unit (engine, HTTP helpers, HLS/DASH parsers, segment templates) and
+22 tests: 18 unit (engine, HTTP helpers, HLS/DASH parsers, segment templates) and
 4 integration tests against a live Range-capable HTTP server (parallel ranges,
 pause/resume checkpoint, range-less fallback, retry of transient 500s).
 
@@ -278,7 +263,7 @@ pause/resume checkpoint, range-less fallback, retry of transient 500s).
 
 ## Limitations
 
-- **DRM-protected streams** cannot be downloaded or recorded.
+- **DRM-protected streams** cannot be downloaded or decrypted.
 - Live HLS, AES-128 encrypted HLS and site-grabber/FTP features are out of scope for now.
 - Scheduler time windows and kernel/WFP capture drivers are not implemented.
 - Windows only. The engine is portable, but the GUI targets the Windows desktop.
