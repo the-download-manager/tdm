@@ -127,6 +127,12 @@ The progress window shows overall speed and each connection's byte range.
       <br><sub>Help → About: source, MIT license, issues and third-party notices.</sub>
     </td>
   </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <img src="docs/screenshot-web.png" alt="TDM local web interface with download list, progress bars and add URL form" width="100%">
+      <br><sub>The local web interface at <code>127.0.0.1:8484</code> — <code>tdm-cli serve</code>.</sub>
+    </td>
+  </tr>
 </table>
 
 <br>
