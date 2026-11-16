@@ -31,7 +31,7 @@
 <br>
 
 <p align="center">
-  <img src="docs/screenshot-main.png" alt="TDM main window: download list with paused and completed transfers, category panel and toolbar" width="100%">
+  <img src="docs/screenshot-main-v2.png" alt="TDM main window: download list with paused and completed transfers, category panel and toolbar" width="100%">
   <br>
   <sub>The main window — segmented transfers, categories, and the per-download list.</sub>
 </p>
@@ -118,19 +118,13 @@ The progress window shows overall speed and each connection's byte range.
 
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <img src="docs/screenshot-main.png" alt="TDM main window with paused and completed downloads" width="100%">
-      <br><sub>The download list, category filter and toolbar.</sub>
-    </td>
-    <td width="50%" valign="top">
-      <img src="docs/screenshot-about.png" alt="TDM About dialog with open-source links, MIT license and credits" width="100%">
-      <br><sub>Help → About: source, MIT license, issues and third-party notices.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" valign="top">
+    <td width="55%" valign="top">
       <img src="docs/screenshot-progress.png" alt="TDM Download progress dialog with overall progress and per-connection bars" width="100%">
       <br><sub>Download progress: overall rainbow bar and per-connection segments.</sub>
+    </td>
+    <td width="45%" valign="top">
+      <img src="docs/screenshot-about.png" alt="TDM About dialog with open-source links, MIT license and credits" width="100%">
+      <br><sub>Help → About: source, MIT license, issues and third-party notices.</sub>
     </td>
   </tr>
 </table>
